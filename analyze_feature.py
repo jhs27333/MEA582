@@ -375,30 +375,34 @@ class ProcessFeatureEnv:
         self.precip_binned_2d, self.precip_hist_2d = self.__bin_2d(x2, y2, z2, instab_bins, subsat_bins)
 
 
+def _make_grid_lines(ax):
+    gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True,
+                      linewidth=2, color='gray', alpha=0.5, linestyle='--')
+    gl.right_labels = False
+    gl.top_labels = False
+
+    gl.xlines = True
+    gl.ylocator = mticker.FixedLocator(np.arange(-90, 90, 10))
+    gl.xlocator = mticker.FixedLocator(np.arange(-180, 180, 10))
+    gl.xlabel_style = {'size': 11}
+    gl.ylabel_style = {'size': 11}
+
 def time_mean_plot(ax, var, range, cmap, cbar_kwargs, title, lat0, lon0, norm=None):
 
-        extent=[lon0.min()-5,lon0.max()+10,
-                lat0.min()-10,lat0.max()]
+    extent=[lon0.min()-5,lon0.max()+10,
+            lat0.min()-10,lat0.max()]
 
-        ax.coastlines()
-        cb=var.plot.pcolormesh(ax=ax, vmax=range[0], vmin=range[1], cmap=cmap,  cbar_kwargs=cbar_kwargs, norm=norm)
-        ax.scatter(lon0,lat0, s = 25, c = 'black', alpha = 0.5)
-        ax.scatter(lon0[0],lat0[0],s=25, marker='D', c='red', alpha=0.5)
-        ax.set_aspect('auto')
-        gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True,
-                          linewidth=2, color='gray', alpha=0.5, linestyle='--')
-        gl.right_labels = False
-        gl.top_labels = False
+    ax.coastlines()
+    cb=var.plot.pcolormesh(ax=ax, vmax=range[0], vmin=range[1], cmap=cmap,  cbar_kwargs=cbar_kwargs, norm=norm)
+    ax.scatter(lon0,lat0, s = 25, c = 'black', alpha = 0.5)
+    ax.scatter(lon0[0],lat0[0],s=25, marker='D', c='red', alpha=0.5)
+    ax.set_aspect('auto')
+    _make_grid_lines(ax)
 
-        gl.xlines = True
-        gl.ylocator = mticker.FixedLocator(np.arange(-90,90,10))
-        gl.xlocator = mticker.FixedLocator(np.arange(-180,180,10))
-        gl.xlabel_style = {'size': 11}
-        gl.ylabel_style = {'size': 11}
-        ax.set_title(title,fontsize=12)
-        ax.set_extent(extent, crs=ccrs.PlateCarree(central_longitude=180))
+    ax.set_title(title,fontsize=12)
+    ax.set_extent(extent, crs=ccrs.PlateCarree(central_longitude=180))
 
-        return cb
+    return cb
 
 
 def composite_plot(ax, var, range, cmap, cbar_kwargs, title, norm=None):
@@ -425,18 +429,7 @@ def snapshot_plot(ax, var, range, cmap, cbar_kwargs, title, cbar_on=False, norm=
         var.plot.pcolormesh(ax=ax, vmin=range[0], vmax=range[1], cbar_kwargs=cbar_kwargs, cmap=cmap, norm=norm)
     else:
         var.plot.pcolormesh(ax=ax, vmin=range[0], vmax=range[1], add_colorbar=cbar_on, cmap=cmap, norm=norm)
-
-
-    gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True,
-                  linewidth=2, color='gray', alpha=0.5, linestyle='--')
-    gl.right_labels = False
-    gl.top_labels = False
-
-    gl.xlines = True
-    gl.ylocator = mticker.FixedLocator(np.arange(-90,90,10))
-    gl.xlocator = mticker.FixedLocator(np.arange(-180,180,10))
-    gl.xlabel_style = {'size': 11}
-    gl.ylabel_style = {'size': 11}
+    _make_grid_lines(ax)
     ax.set_title('{}'.format(title),fontsize=12)
     ax.set_aspect('auto')
 
